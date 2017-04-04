@@ -1,4 +1,4 @@
-FROM doctorlove/docker-php-apache-v8js
+FROM jerev/docker-php-apache-v8js
 
 # the default image has duplicate entries
 RUN echo "deb http://httpredir.debian.org/debian jessie main contrib non-free" > /etc/apt/sources.list && \
