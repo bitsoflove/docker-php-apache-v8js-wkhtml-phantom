@@ -1,19 +1,22 @@
-FROM jerev/docker-php-apache-v8js
-
-EXPOSE 80
-
-# the default image has duplicate entries
-RUN echo "deb http://httpredir.debian.org/debian jessie main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb http://httpredir.debian.org/debian jessie-updates main" >> /etc/apt/sources.list && \
-    echo "deb http://security.debian.org jessie/updates main" >> /etc/apt/sources.list && \
-    echo "deb http://packages.dotdeb.org jessie all" >> /etc/apt/sources.list
+FROM jerev/docker-php-apache-v8js:latest
 
 RUN apt-get update && \
     apt-get install -y \
-    build-essential \
-    libssl-dev \
-    libxrender-dev \
-    gdebi
+        build-essential \
+        fontconfig \
+        git-core \
+        libfontconfig1-dev \
+        libfreetype6-dev \
+        libssl-dev \
+        libx11-dev \
+        libxext-dev \
+        libxrender-dev \
+        openssl \
+        xfonts-75dpi \
+        xvfb && \
+       apt-get purge -y --auto-remove && \
+        apt-get clean && \
+        rm -rf /var/lib/apt/lists/*
 
 # install phantom js
 RUN mkdir /tmp/phantomjs && \
@@ -21,16 +24,7 @@ RUN mkdir /tmp/phantomjs && \
     | tar -xj --strip-components=1 -C /tmp/phantomjs && \
     mv /tmp/phantomjs/bin/phantomjs /usr/local/bin
 
-#RUN wget http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-jessie-amd64.deb && \
-#    gdebi --n wkhtmltox-0.12.2.1_linux-jessie-amd64.deb && \
-#    rm wkhtmltox-0.12.2.1_linux-jessie-amd64.deb
-
-RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.3/wkhtmltox-0.12.3_linux-generic-amd64.tar.xz && \
-    tar vxf wkhtmltox-0.12.3_linux-generic-amd64.tar.xz && \
-    cp wkhtmltox/bin/wk* /usr/local/bin/
-
-# do a little cleanup
-RUN apt-get remove -y --purge software-properties-common build-essential \
-    && apt-get -y autoremove \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# install wkhtmltox
+RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.jessie_amd64.deb && \
+    dpkg -i wkhtmltox_0.12.5-1.jessie_amd64.deb && \
+    rm wkhtmltox_0.12.5-1.jessie_amd64.deb
