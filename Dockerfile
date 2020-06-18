@@ -22,9 +22,15 @@ RUN apt-get update && \
 RUN mkdir /tmp/phantomjs && \
     curl -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
     | tar -xj --strip-components=1 -C /tmp/phantomjs && \
-    mv /tmp/phantomjs/bin/phantomjs /usr/local/bin
+    mv /tmp/phantomjs/bin/phantomjs /usr/local/bin \
+    && rm -rf /tmp/phantomjs
 
 # install wkhtmltox
 RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.jessie_amd64.deb && \
     dpkg -i wkhtmltox_0.12.5-1.jessie_amd64.deb && \
     rm wkhtmltox_0.12.5-1.jessie_amd64.deb
+
+COPY ./scripts/install-composer.sh /opt/docker/install-composer.sh
+
+RUN chmod +x /opt/docker/install-composer.sh \
+    && /opt/docker/install-composer.sh
